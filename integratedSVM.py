@@ -35,10 +35,15 @@ def preProcessLocation(imPath, frameNum):
     #     cv2.waitKey(0) 
     #     cv2.destroyAllWindows()
 
+    if rawImage.size > 100000:
+        print(rawImage.shape)
+        rawImage = cv2.resize(rawImage, (int(0.3*(np.shape(rawImage)[1])), int(0.3*(np.shape(rawImage)[0]))))
     brightImage = rawImage.copy()
     gray = cv2.cvtColor(brightImage, cv2.COLOR_RGB2GRAY)
     brightImage = cv2.cvtColor(brightImage, cv2.COLOR_RGB2BGR)
     
+
+
     # Uncomment to see grayscaled Immage
 
     # cv2.imshow("origional", gray)
@@ -122,9 +127,9 @@ def preProcessLocation(imPath, frameNum):
         # cv2.circle(brightImage, (x, y), 5, (255,0,0), 1) 
         
 # uncomment to see edge detected image
-    # cv2.imshow('Edge detected image', edge_detected_image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    cv2.imshow('Edge detected image', edge_detected_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 
@@ -148,11 +153,8 @@ def preProcessLocation(imPath, frameNum):
     # convert the grayscale image to binary image
     # ret,thresh = cv2.threshold(gray,127,255,0)
 
-    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU) 
-    lowThresh = 0.5*ret
-
     # calculate moments of binary image
-    os.chdir("C:/Users/Keith/Desktop/SVM/IslandDetecion-master/imageStore")
+    os.chdir("./imageStore")
     imCount = 1
     for cnt in contour_list:
         M = cv2.moments(cnt)
@@ -223,9 +225,9 @@ def preProcessLocation(imPath, frameNum):
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     # cv2.imwrite('detectedImg.png', brightImage)
-    # cv2.imshow('Objects Detected',brightImage)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    cv2.imshow('Objects Detected',brightImage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def preProcessFeatures(islandHit):
 	# if os.getcwd())
@@ -296,8 +298,8 @@ def auto_canny(image, sphere, intensityInvert):
             # image = cv2.medianBlur(image, 5)
             # image = cv2.erode(image,kernel,iterations = 2)
     elif 35 < v <= 70:
-        image = cv2.bilateralFilter(image,1,75,75)
-        sigma = 0.3
+        image = cv2.bilateralFilter(image,4,75,75)
+        sigma = 1
     # elif 65 < v:
     #     image = cv2.bilateralFilter(image, 1, 75, 75)
     #     sigma = 1.3
@@ -326,7 +328,7 @@ os.mkdir("./imageStore")
 # imagePath = "./Images/islandtest1.tif"  
 # imagePath = "./Images/islandtest2.tif"
 # imagePath = "./Images/macro_image_09233.tiff"
-imagePath = "C:/Users/Keith/Desktop/mx12160-1point2PercentBa6Fe-16-0/"
+imagePath = "C:/Users/Keith/Desktop/SVM-Droplet-Tracking/Data/"
 
 os.remove("./islandCenters.csv")
 islandCenters = open("./islandCenters.csv", "w", newline='')
@@ -334,13 +336,11 @@ writer = csv.writer(islandCenters)
 indexes = ['x','y','radius','frame']
 writer.writerow(indexes)
 
-rawImgs = ImageSequence(imagePath+'*.jpg')
+rawImgs = ImageSequence(imagePath+'*.tif')
 
 
-counter = 0
-for i in rawImgs:
+for counter,i in enumerate(rawImgs):
     preProcessLocation(i,counter)
-    counter += 1
 
 islandCenters.close
 t = time.process_time()

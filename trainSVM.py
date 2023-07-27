@@ -3,7 +3,6 @@
 from skimage.feature import hog
 from skimage.transform import pyramid_gaussian
 from skimage.io import imread
-import joblib
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import LinearSVC
 from sklearn.metrics import classification_report
@@ -14,12 +13,8 @@ from skimage import color
 from imutils.object_detection import non_max_suppression
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
-import imutils
 import numpy as np
-import argparse
-import cv2
 import os
-import glob
 from PIL import Image 
 from numpy import *
 import pickle
@@ -89,7 +84,7 @@ labels = le.fit_transform(labels)
 
 
 print("Constructing training/testing split...")
-print("Finding optimal C and Gama values - this can take a few minutes...\n")
+print("Finding optimal C and Gamma values - this can take a few minutes...\n")
 
 data = np.array(data, ndmin=2)
 # print(data.shape)
